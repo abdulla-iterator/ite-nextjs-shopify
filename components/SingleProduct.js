@@ -13,7 +13,7 @@ const SingleProduct = ({ ProductId }) => {
     return (
         <>
             <Head>
-                <title>Shopify | {data.name}</title>
+                <title>Shopify</title>
             </Head>
             <div className="mt-6 max-w-2xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
                 <div className="hidden aspect-w-3 aspect-h-4 rounded-lg overflow-hidden lg:block">
@@ -31,7 +31,7 @@ const SingleProduct = ({ ProductId }) => {
                 </div>
                 <div className="mt-4 lg:mt lg:row-span-3">
                     <h2 className="not-sr-only">Product information</h2>
-                    <p className="text-3xl text-gray-900">{data.price}</p>
+                    <p className="text-3xl text-gray-900">Price: {data.price}</p>
                 </div>
             </div>
         </>
