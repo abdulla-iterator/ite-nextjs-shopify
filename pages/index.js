@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import Navbar from '../components/Navbar'
 import Products from '../components/Products'
 import { storeApi } from '../utils/storeApi'
 
@@ -9,22 +8,24 @@ export default function Home({ products }) {
       <Head>
         <title>Shopify</title>
       </Head>
-      <Navbar />
       <Products products={products} />
-
     </>
   )
 }
 
+
+
 export async function getStaticProps() {
   const { data } = await storeApi(productsQuery)
-  console.log(data);
+
   return {
     props: {
       products: data.products
     }
   }
 }
+
+// query for the first 8 products in home page
 const gql = String.raw
 const productsQuery = gql`
 query products{
