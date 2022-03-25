@@ -43,6 +43,13 @@ query SingleProduct($handle: String!){
         }
       }
     }
+    variants(first:1){
+      edges{
+        node{
+          id
+        }
+      }
+    }
   }
 }
 

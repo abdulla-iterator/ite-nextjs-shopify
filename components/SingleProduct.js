@@ -1,8 +1,23 @@
+import { useState } from 'react'
 import Head from 'next/head';
 import Image from 'next/image';
 import React from 'react'
+import { storeApi } from '../utils/storeApi'
+
 
 const SingleProduct = ({ product }) => {
+
+    const variantId = product.variants.edges[0].node.id
+    const [loading, setLoading] = useState(false);
+
+
+    const checkout = async () => {
+        setLoading(true);
+        const { data } = await storeApi(checkoutMutation, { variantId })
+        const { webUrl } = data.checkoutCreate.checkout
+        window.location.href = webUrl
+        setLoading(false);
+    }
 
     return (
         <>
@@ -35,8 +50,10 @@ const SingleProduct = ({ product }) => {
                                 <span className="title-font font-medium text-2xl text-gray-900">
                                     ${product.priceRange.minVariantPrice.amount}
                                 </span>
-                                <button className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
-                                    Buy Now
+                                <button className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+                                    onClick={checkout}
+                                >
+                                    {loading ? 'Loading...' : 'Buy Now'}
                                 </button>
                                 <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
                                     <svg
@@ -62,3 +79,20 @@ const SingleProduct = ({ product }) => {
 export default SingleProduct
 
 
+const gql = String.raw
+// mutation for the checkout
+const checkoutMutation = gql`
+mutation CheckoutCreate($variantId: ID!){
+  checkoutCreate(input:{
+    lineItems: {
+      variantId: $variantId
+      quantity:1
+    }
+  }){
+    checkout{
+      webUrl
+    }
+  }
+}
+
+`
