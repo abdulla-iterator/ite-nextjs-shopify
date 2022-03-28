@@ -1,10 +1,15 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import Cart from './Cart'
+import { useCart } from '../lib/cartState'
+import { Dialog, Transition } from '@headlessui/react'
 
 const Navbar = () => {
-    const [state, setState] = useState(false)
-
+    const [state, setState] = useState(true)
+    const [open, setOpen] = useState(true)
+    const { openCart } = useCart()
+    console.log();
     const navigation = [
         { title: "Products", path: `/products` },
         { title: "Collections", path: "/collections" },
@@ -40,7 +45,7 @@ const Navbar = () => {
                     <ul className="justify-center items-center space-y-8 md:flex md:space-x-6 md:space-y-0">
                         {
                             navigation.map((item, idx) => (
-                                <Link key={idx} href={`${item.path}`} className="text-gray-900 hover:text-indigo-600">
+                                <Link key={idx} href={`${item.path}`} className="text-gray-900 hover:text-indigo-600 text-size-3">
                                     <a>
                                         {item.title}
                                     </a>
@@ -50,7 +55,12 @@ const Navbar = () => {
                         }
                     </ul>
                 </div>
-
+                <button onClick={openCart}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <Cart />
+                </button>
             </div>
         </nav>
     )

@@ -1,11 +1,14 @@
 import Navbar from '../components/Navbar'
+import { CartStateProvider } from '../lib/cartState'
 import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <Navbar />
-      <Component {...pageProps} />
+      <CartStateProvider>
+        <Navbar />
+        <Component {...pageProps} />
+      </CartStateProvider>
     </>
   )
 }

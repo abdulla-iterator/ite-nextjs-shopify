@@ -28,7 +28,7 @@ const Collections = ({ collections }) => {
                                         />
                                     </div>
                                     <h3 className="mt-6 text-sm text-gray-500">
-                                        <a href={`/collection/${item.node.id}`}>
+                                        <a href={`/collection/${item.node.handle}`}>
                                             <span className="absolute inset-0" />
                                             {item.node.title}
                                         </a>
