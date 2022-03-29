@@ -5,6 +5,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import { useCart } from '../lib/cartState'
 import Link from 'next/link'
+import { storeApi } from '../utils/storeApi';
 
 const products = [
     {
@@ -31,8 +32,12 @@ const products = [
     // More products...
 ]
 
-const Cart = () => {
-    const { open, openCart, closeCart } = useCart()
+const Cart = ({ cartProducts }) => {
+    console.log(cartProducts);
+    const { open, openCart, closeCart, cartData } = useCart()
+    console.log(cartData);
+
+    const image = cartData.lines.edges[0].node.merchandise.image.url
 
     return (
         <Transition.Root show={open} as={Fragment}>
@@ -84,7 +89,7 @@ const Cart = () => {
                                                         <li key={product.id} className="flex py-6">
                                                             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                                                 <Image
-                                                                    src={product.imageSrc}
+                                                                    src={image}
                                                                     alt={product.imageAlt}
                                                                     className="h-full w-full object-cover object-center"
                                                                     layout='responsive' width={100} height={100}
@@ -126,7 +131,7 @@ const Cart = () => {
                                         <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                                         <div className="mt-6">
                                             <a
-                                                href="#"
+                                                href={cartData.checkoutUrl}
                                                 className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                                             >
                                                 Checkout
@@ -157,14 +162,25 @@ const Cart = () => {
 
 export default Cart;
 
-// export as
+export async function getStaticProps() {
+    const { cartData } = useCart()
+    console.log(cartData);
+    const data = await storeApi(cartItems, { Id: cartData.id })
+    console.log(data);
+
+    return {
+        props: {
+            cartProducts: data
+        },
+    }
+}
 
 
 const gql = String.raw
 
 const cartItems = gql`
-query cartitems{
-  cart(id:"Z2lkOi8vc2hvcGlmeS9DYXJ0L2RkNjNmNzdiMDI4MWNhZjU4YzMyZTJjZmI3NGQ5YTZi"){
+query cartitems($Id: ID!){
+  cart(id: $Id){
     id
     lines(first:10){
       edges{

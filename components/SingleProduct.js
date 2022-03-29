@@ -3,18 +3,21 @@ import Head from 'next/head';
 import Image from 'next/image';
 import React from 'react'
 import { storeApi } from '../utils/storeApi'
+import { useCart } from '../lib/cartState';
 
 
 const SingleProduct = ({ product }) => {
+    const { cartData, setCartData } = useCart()
 
     const variantId = product.variants.edges[0].node.id
     const [loading, setLoading] = useState(false);
-    console.log(variantId);
 
 
     const addToCart = async () => {
         setLoading(true);
-        await storeApi(addToCartMutation, { variantId })
+        const { data } = await storeApi(addToCartMutation, { variantId })
+        console.log(data.cartCreate);
+        setCartData(data.cartCreate.cart)
         setLoading(false);
     }
 
