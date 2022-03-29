@@ -9,13 +9,12 @@ const SingleProduct = ({ product }) => {
 
     const variantId = product.variants.edges[0].node.id
     const [loading, setLoading] = useState(false);
+    console.log(variantId);
 
 
-    const checkout = async () => {
+    const addToCart = async () => {
         setLoading(true);
-        const { data } = await storeApi(checkoutMutation, { variantId })
-        const { webUrl } = data.checkoutCreate.checkout
-        window.location.href = webUrl
+        await storeApi(addToCartMutation, { variantId })
         setLoading(false);
     }
 
@@ -51,9 +50,9 @@ const SingleProduct = ({ product }) => {
                                     ${product.priceRange.minVariantPrice.amount}
                                 </span>
                                 <button className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
-                                    onClick={checkout}
+                                    onClick={addToCart}
                                 >
-                                    {loading ? 'Loading...' : 'Buy Now'}
+                                    {loading ? 'Loading...' : 'Add to Cart'}
                                 </button>
                                 <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
                                     <svg
@@ -81,16 +80,42 @@ export default SingleProduct
 
 const gql = String.raw
 // mutation for the checkout
-const checkoutMutation = gql`
-mutation CheckoutCreate($variantId: ID!){
-  checkoutCreate(input:{
-    lineItems: {
-      variantId: $variantId
-      quantity:1
-    }
+const addToCartMutation = gql`
+mutation createCart($variantId: ID!,){
+  cartCreate(input: {
+    lines: [
+      {
+        quantity: 1
+        merchandiseId: $variantId
+      }
+    ]
   }){
-    checkout{
-      webUrl
+    cart{
+      id
+      lines(first:20){
+        edges{
+          node{
+            id
+            merchandise{
+              ... on ProductVariant{
+                id
+                image{
+                  url
+                }
+                priceV2{
+                  amount
+                }
+              }
+            }
+          }
+        }
+      }
+      checkoutUrl
+      estimatedCost{
+        subtotalAmount{
+          amount
+        }
+      }
     }
   }
 }

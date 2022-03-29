@@ -156,3 +156,46 @@ const Cart = () => {
 }
 
 export default Cart;
+
+// export as
+
+
+const gql = String.raw
+
+const cartItems = gql`
+query cartitems{
+  cart(id:"Z2lkOi8vc2hvcGlmeS9DYXJ0L2RkNjNmNzdiMDI4MWNhZjU4YzMyZTJjZmI3NGQ5YTZi"){
+    id
+    lines(first:10){
+      edges{
+        node{
+          merchandise{
+            ... on ProductVariant{
+              id
+              quantityAvailable
+              product{
+                id
+                title
+                images(first:1){
+                  edges{
+                    node{
+                      url
+                    }
+                  }
+                }
+                priceRange{
+                  minVariantPrice{
+                    amount
+                  }
+                }
+                
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+`

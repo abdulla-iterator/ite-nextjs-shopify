@@ -28,6 +28,7 @@ const Products = ({ products }) => {
                                     </div>
                                     <h3 className="mt-4 text-sm text-gray-700">{product.title}</h3>
                                     <p className="mt-1 text-lg font-medium text-gray-900">$ {product.priceRange.minVariantPrice.amount}</p>
+                                    <h3 className="mt-4 text-sm text-gray-700">Add to Cart</h3>
                                 </a>
                             </Link>
                         )
