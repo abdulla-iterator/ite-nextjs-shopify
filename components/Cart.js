@@ -4,40 +4,114 @@ import Image from 'next/image';
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import { useCart } from '../lib/cartState'
-import Link from 'next/link'
 import { storeApi } from '../utils/storeApi';
+import { useEffect } from 'react';
 
-const products = [
-    {
-        id: 1,
-        name: 'Throwback Hip Bag',
-        href: '#',
-        color: 'Salmon',
-        price: '$90.00',
-        quantity: 1,
-        imageSrc: 'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
-        imageAlt: 'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-    },
-    {
-        id: 2,
-        name: 'Medium Stuff Satchel',
-        href: '#',
-        color: 'Blue',
-        price: '$32.00',
-        quantity: 1,
-        imageSrc: 'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-    },
-    // More products...
-]
+// const products = [
+//     {
+//         id: 1,
+//         name: 'Throwback Hip Bag',
+//         href: '#',
+//         color: 'Salmon',
+//         price: '$90.00',
+//         quantity: 1,
+//         imageSrc: 'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
+//         imageAlt: 'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
+//     },
+//     {
+//         id: 2,
+//         name: 'Medium Stuff Satchel',
+//         href: '#',
+//         color: 'Blue',
+//         price: '$32.00',
+//         quantity: 1,
+//         imageSrc: 'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
+//         imageAlt:
+//             'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
+//     },
+//     // More products...
+// ]
 
-const Cart = ({ cartProducts }) => {
-    console.log(cartProducts);
-    const { open, openCart, closeCart, cartData } = useCart()
-    console.log(cartData);
+const gql = String.raw
 
-    const image = cartData.lines.edges[0].node.merchandise.image.url
+const getCartQuery = gql`
+query getCart($Id: ID!){
+  cart(id: $Id){
+    id
+    lines(first:10){
+      edges{
+        node{
+          id
+          quantity
+          merchandise{
+            ... on ProductVariant{
+              id
+              image{
+                url
+              }
+              priceV2{
+                amount
+              }
+              product{
+                id
+                title
+                handle
+              }
+            }
+          }
+
+        }
+      }
+    }
+    checkoutUrl
+    estimatedCost{
+      subtotalAmount{
+        amount
+      }
+    }
+  }
+}
+
+`
+
+const removeItemMutation = gql`
+  mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+      cart {
+        id
+      }
+    }
+  }
+`
+
+
+const Cart = () => {
+    const { open, openCart, closeCart, cartData, setCartData } = useCart()
+
+    const handleRemoveItem = async (cartId, lineId) => {
+        const variables = {
+            cartId,
+            lineIds: [lineId],
+        }
+        await storeApi(removeItemMutation, variables)
+    }
+    useEffect(() => {
+        let cartId = localStorage.getItem('cartId')
+        console.log(cartId);
+        const cartDetails = async () => {
+            const { data } = await storeApi(getCartQuery, { Id: cartId })
+            console.log(data);
+            setCartData(data)
+        }
+        cartDetails()
+    }, [open, setCartData])
+
+    const products = cartData.cart?.lines.edges
+    console.log(products);
+
+
+
+
 
     return (
         <Transition.Root show={open} as={Fragment}>
@@ -85,39 +159,42 @@ const Cart = ({ cartProducts }) => {
                                         <div className="mt-8">
                                             <div className="flow-root">
                                                 <ul role="list" className="-my-6 divide-y divide-gray-200">
-                                                    {products.map((product) => (
-                                                        <li key={product.id} className="flex py-6">
-                                                            <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                                                <Image
-                                                                    src={image}
-                                                                    alt={product.imageAlt}
-                                                                    className="h-full w-full object-cover object-center"
-                                                                    layout='responsive' width={100} height={100}
-                                                                />
-                                                            </div>
-
-                                                            <div className="ml-4 flex flex-1 flex-col">
-                                                                <div>
-                                                                    <div className="flex justify-between text-base font-medium text-gray-900">
-                                                                        <h3>
-                                                                            <a href={product.href}> {product.name} </a>
-                                                                        </h3>
-                                                                        <p className="ml-4">{product.price}</p>
-                                                                    </div>
-                                                                    <p className="mt-1 text-sm text-gray-500">{product.color}</p>
+                                                    {products?.map((product) => {
+                                                        const image = product?.node.merchandise.image.url
+                                                        return (
+                                                            <li key={product.node.id} className="flex py-6">
+                                                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                                                    <Image
+                                                                        src={image}
+                                                                        alt={product.node.merchandise.product.title}
+                                                                        className="h-full w-full object-cover object-center"
+                                                                        layout='responsive' width={100} height={100}
+                                                                    />
                                                                 </div>
-                                                                <div className="flex flex-1 items-end justify-between text-sm">
-                                                                    <p className="text-gray-500">Qty {product.quantity}</p>
 
-                                                                    <div className="flex">
-                                                                        <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500">
-                                                                            Remove
-                                                                        </button>
+                                                                <div className="ml-4 flex flex-1 flex-col">
+                                                                    <div>
+                                                                        <div className="flex justify-between text-base font-medium text-gray-900">
+                                                                            <h3>
+                                                                                <a href={`product/${product.node.merchandise.product.handle}`}> {product.node.merchandise.product.title} </a>
+                                                                            </h3>
+                                                                            <p className="ml-4">{product.node.lines?.edges.node.merchandise.priceV2.amount}</p>
+                                                                        </div>
+                                                                        {/* <p className="mt-1 text-sm text-gray-500">{product.color}</p> */}
+                                                                    </div>
+                                                                    <div className="flex flex-1 items-end justify-between text-sm">
+                                                                        <p className="text-gray-500">Qty {product.node.quantity}</p>
+
+                                                                        <div className="flex">
+                                                                            <button type="button" onClick={() => handleRemoveItem(cartData.cart.id, product.node.id)} className="font-medium text-indigo-600 hover:text-indigo-500">
+                                                                                Remove
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </li>
-                                                    ))}
+                                                            </li>
+                                                        )
+                                                    })}
                                                 </ul>
                                             </div>
                                         </div>
@@ -126,12 +203,12 @@ const Cart = ({ cartProducts }) => {
                                     <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
                                         <div className="flex justify-between text-base font-medium text-gray-900">
                                             <p>Subtotal</p>
-                                            <p>$262.00</p>
+                                            <p>₹{cartData.cart?.estimatedCost.subtotalAmount.amount}</p>
                                         </div>
                                         <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                                         <div className="mt-6">
                                             <a
-                                                href={cartData.checkoutUrl}
+                                                href={cartData.cart?.checkoutUrl}
                                                 className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                                             >
                                                 Checkout
@@ -162,56 +239,4 @@ const Cart = ({ cartProducts }) => {
 
 export default Cart;
 
-export async function getStaticProps() {
-    const { cartData } = useCart()
-    console.log(cartData);
-    const data = await storeApi(cartItems, { Id: cartData.id })
-    console.log(data);
 
-    return {
-        props: {
-            cartProducts: data
-        },
-    }
-}
-
-
-const gql = String.raw
-
-const cartItems = gql`
-query cartitems($Id: ID!){
-  cart(id: $Id){
-    id
-    lines(first:10){
-      edges{
-        node{
-          merchandise{
-            ... on ProductVariant{
-              id
-              quantityAvailable
-              product{
-                id
-                title
-                images(first:1){
-                  edges{
-                    node{
-                      url
-                    }
-                  }
-                }
-                priceRange{
-                  minVariantPrice{
-                    amount
-                  }
-                }
-                
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-`
