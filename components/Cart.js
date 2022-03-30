@@ -88,13 +88,6 @@ const removeItemMutation = gql`
 const Cart = () => {
     const { open, openCart, closeCart, cartData, setCartData } = useCart()
 
-    const handleRemoveItem = async (cartId, lineId) => {
-        const variables = {
-            cartId,
-            lineIds: [lineId],
-        }
-        await storeApi(removeItemMutation, variables)
-    }
     useEffect(() => {
         let cartId = localStorage.getItem('cartId')
         console.log(cartId);
@@ -104,8 +97,15 @@ const Cart = () => {
             setCartData(data)
         }
         cartDetails()
-    }, [open, setCartData])
+    }, [open])
 
+    const handleRemoveItem = async (cartId, lineId) => {
+        const variables = {
+            cartId,
+            lineIds: [lineId],
+        }
+        await storeApi(removeItemMutation, variables)
+    }
     const products = cartData.cart?.lines.edges
     console.log(products);
 
@@ -178,7 +178,7 @@ const Cart = () => {
                                                                             <h3>
                                                                                 <a href={`product/${product.node.merchandise.product.handle}`}> {product.node.merchandise.product.title} </a>
                                                                             </h3>
-                                                                            <p className="ml-4">{product.node.lines?.edges.node.merchandise.priceV2.amount}</p>
+                                                                            <p className="ml-4">{product.node.merchandise.priceV2.amount}</p>
                                                                         </div>
                                                                         {/* <p className="mt-1 text-sm text-gray-500">{product.color}</p> */}
                                                                     </div>
