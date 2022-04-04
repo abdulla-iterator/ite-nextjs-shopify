@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import React from 'react'
 import { storeApi } from '../utils/storeApi'
+import { useCart } from '../lib/cartState';
 
 const gql = String.raw
 const createCartMutation = gql`
@@ -26,10 +27,12 @@ const updateCartMutation = gql`
   `
 
 const SingleProduct = ({ product }) => {
-  const [quantity, setQuantity] = useState(1)
+  const { openCart, setCartData, quantity, setQuantity } = useCart()
   const variantId = product.variants.edges[0].node.id
-  const [loading, setLoading] = useState(false);
+  console.log(product);
   console.log(variantId);
+  const [loading, setLoading] = useState(false);
+
 
   const getLines = () => [
     {
@@ -42,6 +45,7 @@ const SingleProduct = ({ product }) => {
 
 
   const handleAddToCart = async () => {
+    setLoading(true);
     let cartId = sessionStorage.getItem('cartId')
     console.log(cartId)
     if (cartId) {
@@ -66,6 +70,8 @@ const SingleProduct = ({ product }) => {
       localStorage.setItem('cartId', cartId)
       sessionStorage.setItem('cartId', cartId)
     }
+    setLoading(false);
+    openCart()
   }
 
   return (
@@ -80,7 +86,8 @@ const SingleProduct = ({ product }) => {
               className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
               src={product.images.edges[0].node.url}
               alt={product.title}
-              width={500} height={500}
+              width={400} height={300}
+              layout='fixed'
             />
             <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
               <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
@@ -102,7 +109,7 @@ const SingleProduct = ({ product }) => {
                 <button className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
                   onClick={handleAddToCart}
                 >
-                  {loading ? 'loading' : 'Add to Cart'}
+                  {loading ? 'Adding to Cart' : 'Add to Cart'}
                 </button>
                 <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
                   <svg
