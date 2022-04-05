@@ -78,11 +78,23 @@ const updateCartMutation = gql`
   `
 
 const increaseQuantityMutation = gql`
-    mutation cartLinesUpdate($cartId: ID!, $lines: [{quantity: Int, lineId: ID!}]!) {
+    mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
         cartLinesUpdate(cartId: $cartId, lines: $lines) {
             cart{
                 id
-                quantity
+                estimatedCost{
+                    subtotalAmount{
+                        amount
+                    }
+                }
+                lines(first:10){
+                    edges{
+                        node{
+                            id
+                            quantity
+                        }
+                    }
+                }
             }
     }
 }
@@ -90,15 +102,12 @@ const increaseQuantityMutation = gql`
 
 
 const Cart = () => {
-    const { open, openCart, closeCart, cartData, setCartData, quantity } = useCart()
-
-    const [productQty, setProductQty] = useState(cartData?.cart?.lines?.edges[0]?.node?.quantity)
-    console.log(productQty);
-
+    const { open, openCart, closeCart, cartData, setCartData, } = useCart()
     const [loading, setLoading] = useState(false);
-    // const variantId = cartData?.cart?.lines?.edges[0]?.node?.merchandise?.id
-    // console.log(variantId);
-    // console.log(cartData);
+
+
+
+    console.log(cartData);
 
     useEffect(() => {
         let cartId = localStorage.getItem('cartId')
@@ -130,23 +139,37 @@ const Cart = () => {
         setLoading(false)
     }
 
-    const increaseQuantity = async (cartId, variantId) => {
-        console.log('adddddddddddddd');
-        console.log(cartId)
-        console.log(variantId)
+    const increaseQuantity = async (id, qty) => {
+        setLoading(true)
         const variables = {
-            cartId,
+            cartId: cartData?.cart?.id,
             lines: {
-                quantity: 1,
-                lineId: variantId
+                id,
+                quantity: qty + 1,
             },
         }
 
-        const { data } = await storeApi(increaseQuantityMutation, variables)
+        await storeApi(increaseQuantityMutation, variables)
+        const { data } = await storeApi(getCartQuery, { Id: cartData?.cart?.id })
+        setCartData(data)
+        setLoading(false)
+    }
 
+    const decreaseQuantity = async (id, qty) => {
+        setLoading(true)
+        const variables = {
+            cartId: cartData?.cart?.id,
+            lines: {
+                id,
+                quantity: qty - 1,
+            },
+        }
 
+        await storeApi(increaseQuantityMutation, variables)
+        const { data } = await storeApi(getCartQuery, { Id: cartData?.cart?.id })
+        setCartData(data)
         console.log('increased cart', data);
-        // setProductQty(cartData?.cart?.lines?.edges?.[0]?.node?.quantity + 1)
+        setLoading(false)
     }
 
 
@@ -198,7 +221,6 @@ const Cart = () => {
                                             <div className="flow-root">
                                                 <ul role="list" className="-my-6 divide-y divide-gray-200">
                                                     {cartData?.cart?.lines.edges?.map((product) => {
-                                                        console.log(product);
                                                         const image = product?.node.merchandise.image.url
                                                         return (
                                                             <li key={product.node.id} className="flex py-6">
@@ -217,12 +239,12 @@ const Cart = () => {
                                                                             <h3>
                                                                                 <a href={`/product/${product.node.merchandise.product.handle}`}> {product.node.merchandise.product.title} </a>
                                                                             </h3>
-                                                                            <p className="ml-4">₹ {+(product.node.merchandise.priceV2.amount * productQty).toFixed(5)}</p>
+                                                                            <p className="ml-4">₹ {+(product.node.merchandise.priceV2.amount * product.node.quantity).toFixed(5)}</p>
                                                                         </div>
                                                                         {/* <p className="mt-1 text-sm text-gray-500">{product.color}</p> */}
                                                                     </div>
                                                                     <div className="flex flex-1 items-end justify-between text-sm">
-                                                                        <p className="text-gray-900 text-base">Qty<button type='button' className="text-xl mx-4" >-</button>{productQty}<button type='button' onClick={() => increaseQuantity(cartData.cart.id, product.node.merchandise.id)} className=' mx-4 text-lg'>+</button> </p>
+                                                                        <p className="text-gray-900 text-base">Qty<button type='button' onClick={() => decreaseQuantity(product.node.id, product.node.quantity)} className="text-xl mx-4" >-</button>{product.node.quantity}<button type='button' onClick={() => increaseQuantity(product.node.id, product.node.quantity)} className=' mx-4 text-lg'>+</button> </p>
 
                                                                         <div className="flex">
                                                                             <button type="button" onClick={() => handleRemoveItem(cartData?.cart?.id, product?.node?.id)} className="font-medium text-indigo-600 hover:text-indigo-500">
