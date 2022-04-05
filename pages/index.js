@@ -34,6 +34,13 @@ products(first: 8) {
     node {
       title
       handle
+      variants(first:10){
+          edges{
+            node{
+              id
+            }
+          }
+        }
       priceRange{
         minVariantPrice{
           amount

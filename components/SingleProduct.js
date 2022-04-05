@@ -29,8 +29,6 @@ const updateCartMutation = gql`
 const SingleProduct = ({ product }) => {
   const { openCart, setCartData, quantity, setQuantity } = useCart()
   const variantId = product.variants.edges[0].node.id
-  console.log(product);
-  console.log(variantId);
   const [loading, setLoading] = useState(false);
 
 
