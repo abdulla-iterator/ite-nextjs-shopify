@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 
 const gql = String.raw
 
-const getCartQuery = gql`
+export const getCartQuery = gql`
 query getCart($Id: ID!){
   cart(id: $Id){
     id
@@ -58,7 +58,7 @@ query getCart($Id: ID!){
 
 `
 
-const removeItemMutation = gql`
+export const removeItemMutation = gql`
   mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
@@ -67,7 +67,7 @@ const removeItemMutation = gql`
     }
   }
 `
-const updateCartMutation = gql`
+export const updateCartMutation = gql`
     mutation cartLinesAdd($cartId: ID!, $lineIds: [ID!]!) {
       cartLinesAdd(cartId: $cartId, lineIds: $lineIds) {
         cart {
@@ -77,7 +77,7 @@ const updateCartMutation = gql`
     }
   `
 
-const increaseQuantityMutation = gql`
+export const increaseQuantityMutation = gql`
     mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
         cartLinesUpdate(cartId: $cartId, lines: $lines) {
             cart{
@@ -222,6 +222,7 @@ const Cart = () => {
                                                 <ul role="list" className="-my-6 divide-y divide-gray-200">
                                                     {cartData?.cart?.lines.edges?.map((product) => {
                                                         const image = product?.node.merchandise.image.url
+                                                        console.log(product.node.id);
                                                         return (
                                                             <li key={product.node.id} className="flex py-6">
                                                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">

@@ -30,13 +30,6 @@ const Products = ({ products }) => {
     const [loading, setLoading] = useState(false);
     const { quantity, openCart } = useCart()
 
-    const getLines = () => [
-        {
-            quantity: parseInt(quantity),
-            merchandiseId: variantId
-        },
-    ]
-
 
 
     const AddToCart = async (id) => {

@@ -26,6 +26,7 @@ const gql = String.raw
 const singleProductQuery = gql`
 query SingleProduct($handle: String!){
   productByHandle(handle: $handle){
+    id
     title
     description
     updatedAt
