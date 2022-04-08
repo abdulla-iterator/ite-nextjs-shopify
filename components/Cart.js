@@ -176,8 +176,8 @@ const Cart = () => {
 
     return (
         <Transition.Root show={open} as={Fragment}>
-            <Dialog as="div" className="fixed inset-0 overflow-hidden" onClose={closeCart} >
-                <div className="absolute inset-0 overflow-hidden">
+            <Dialog as="div" className="fixed inset-0 overflow-hidden z-40" onClose={closeCart} >
+                <div className="absolute inset-0 overflow-hidden z-40">
                     <Transition.Child
                         as={Fragment}
                         enter="ease-in-out duration-500"
@@ -190,7 +190,7 @@ const Cart = () => {
                         <Dialog.Overlay className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
                     </Transition.Child>
 
-                    <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                    <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 z-40">
                         <Transition.Child
                             as={Fragment}
                             enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -200,7 +200,7 @@ const Cart = () => {
                             leaveFrom="translate-x-0"
                             leaveTo="translate-x-full"
                         >
-                            <div className="pointer-events-auto w-screen max-w-md">
+                            <div className="pointer-events-auto w-screen max-w-md z-40">
                                 <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                                     <div className="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
                                         <div className="flex items-start justify-between">

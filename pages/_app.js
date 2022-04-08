@@ -1,4 +1,4 @@
-import Navbar from '../components/Navbar'
+import Navb from '../components/Navb'
 import { CartStateProvider } from '../lib/cartState'
 import '../styles/globals.css'
 
@@ -6,7 +6,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <CartStateProvider>
-        <Navbar />
+        <Navb />
         <Component {...pageProps} />
       </CartStateProvider>
     </>

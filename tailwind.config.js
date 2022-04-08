@@ -12,6 +12,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/aspect-ratio', '@headlessui/react'),
+    require('@tailwindcss/aspect-ratio', '@headlessui/react', '@tailwindcss/forms'),
   ],
 }
