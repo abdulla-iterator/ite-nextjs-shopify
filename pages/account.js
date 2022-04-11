@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { storeApi } from '../utils/storeApi';
-import { data } from 'autoprefixer';
 import { useCart } from '../lib/cartState';
 
 const gql = String.raw;
@@ -21,22 +20,41 @@ const Account = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        console.log(token);
+
         const getCustomerDetails = async () => {
             if (token) {
                 console.log(token);
+
                 const { data } = await storeApi(Customer, { customerAccessToken: token });
-                console.log(data);
+
                 setCustomerDetails(data);
             } else {
-                router.push('/login');
+                router.push('/account/login');
+
             }
         }
         getCustomerDetails();
     }, [])
-    console.log(customerDetails?.customer?.displayName);
+
+    const handleLogout = async () => {
+        localStorage.removeItem('token');
+        router.push('/account/login');
+        setCustomerDetails('');
+    }
+
+
     return (
-        <div className='mt-20'>{customerDetails?.customer?.displayName}</div>
+        <div className='m-50-20 p-20'>
+            <div className='flex justify-between'>
+                <h1>Account</h1>
+                <div>
+                    <h2>{customerDetails.customer?.displayName}</h2>
+                    <p>{customerDetails.customer?.email}</p>
+                </div>
+                <button onClick={handleLogout}>Logout</button>
+            </div>
+
+        </div >
     )
 }
 

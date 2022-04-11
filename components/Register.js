@@ -21,6 +21,22 @@ const CustomerCreate = gql`
   }
 `;
 
+const CustomerLogin = gql`
+mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+  customerAccessTokenCreate(input: $input) {
+    customerAccessToken {
+      accessToken
+      expiresAt
+    }
+    customerUserErrors {
+      # CustomerUserError fields
+      message
+    }
+  }
+}
+`
+
+
 const Register = () => {
     const router = useRouter();
 
@@ -34,16 +50,21 @@ const Register = () => {
 
     const handleSignin = async (e) => {
         e.preventDefault();
-        console.log(inputs);
+
         const { data } = await storeApi(CustomerCreate, { input: inputs });
 
-        console.log(data);
         if (data.customerCreate.customer !== null) {
+            const { data } = await storeApi(CustomerLogin, { input: { email: inputs.email, password: inputs.password } });
+
+            const token = data.customerAccessTokenCreate.customerAccessToken.accessToken;
+            localStorage.setItem("token", token);
+
             router.push("/account");
         }
         setErrors(data.customerCreate?.customerUserErrors[0]?.message);
     };
-    console.log(errors);
+
+
     return (
         <div className="min-h-full flex mt-20 items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
