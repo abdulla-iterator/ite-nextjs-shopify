@@ -18,14 +18,16 @@ const Navb = () => {
         <nav className="bg-white w-full top-0 z-40  sticky-nav fixed">
             <div className="items-center px-4 max-w-screen-xl mx-auto lg:flex lg:px-8">
                 <div className="flex items-center justify-between py-3 lg:py-4 lg:block">
-                    <a href={'/'} >
-                        <img
-                            src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-                            width={40}
-                            height={40}
-                            alt=""
-                        />
-                    </a>
+                    <Link href={'/'} >
+                        <a >
+                            <img
+                                src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
+                                width={40}
+                                height={40}
+                                alt=""
+                            />
+                        </a>
+                    </Link>
                     <div className="lg:hidden">
                         <button className="text-gray-700 outline-none p-2 rounded-md focus:border-gray-400 focus:border"
                             onClick={() => setToggle(!toggle)}
@@ -65,11 +67,11 @@ const Navb = () => {
                             {
                                 navigation.map((item, idx) => {
                                     return (
-                                        <li key={idx} className="text-gray-600 hover:text-indigo-600">
-                                            <a href={item.path}>
+                                        <Link href={item.path} key={idx} className="text-gray-600 hover:text-indigo-600">
+                                            <a >
                                                 {item.title}
                                             </a>
-                                        </li>
+                                        </Link>
                                     )
                                 })
                             }

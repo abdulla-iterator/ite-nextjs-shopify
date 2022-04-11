@@ -95,7 +95,7 @@ const Products = ({ products }) => {
                                             <h3 className="mt-4 text-sm text-gray-700">{product.title}</h3>
                                         </a>
                                     </Link>
-                                    <p className="mt-1 text-lg font-medium text-gray-900">$ {product.priceRange.minVariantPrice.amount}</p>
+                                    <p className="mt-1 text-lg font-medium text-gray-900">₹ {product.priceRange.minVariantPrice.amount}</p>
                                 </a>
                                 <button onClick={() => AddToCart(item.node.variants.edges[0].node.id)} className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
                                     {loading ? 'Adding to Cart' : 'Add to Cart'}

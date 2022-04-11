@@ -27,12 +27,12 @@ const Collections = ({ collections }) => {
                                             layout='fill'
                                         />
                                     </div>
-                                    <h3 className="mt-6 text-sm text-gray-500">
-                                        <a href={`/collection/${item.node.handle}`}>
+                                    <Link href={`/collection/${item.node.handle}`} className="mt-6 text-sm text-gray-500">
+                                        <a >
                                             <span className="absolute inset-0" />
                                             {item.node.title}
                                         </a>
-                                    </h3>
+                                    </Link>
                                     <p className="text-base font-semibold text-gray-900">{item.node.description}</p>
                                 </>
                             </div>
