@@ -102,12 +102,11 @@ export const increaseQuantityMutation = gql`
 
 
 const Cart = () => {
-    const { open, openCart, closeCart, cartData, setCartData, } = useCart()
+    const { open, openCart, closeCart, cartData, setCartData, customerDetails } = useCart()
     const [loading, setLoading] = useState(false);
 
 
 
-    console.log(cartData);
 
     useEffect(() => {
         let cartId = localStorage.getItem('cartId')
@@ -204,7 +203,7 @@ const Cart = () => {
                                 <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                                     <div className="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
                                         <div className="flex items-start justify-between">
-                                            <Dialog.Title className="text-lg font-medium text-gray-900"> Shopping cart {cartData?.cart?.lines.edges.length === 0 && 'is Empty'}</Dialog.Title>
+                                            <Dialog.Title className="text-lg font-medium text-gray-900">{customerDetails?.customer?.displayName} Shopping cart {cartData?.cart?.lines.edges.length === 0 && 'is Empty'}</Dialog.Title>
                                             <div className="ml-3 flex h-7 items-center">
                                                 <button
                                                     type="button"
@@ -222,7 +221,6 @@ const Cart = () => {
                                                 <ul role="list" className="-my-6 divide-y divide-gray-200">
                                                     {cartData?.cart?.lines.edges?.map((product) => {
                                                         const image = product?.node.merchandise.image.url
-                                                        console.log(product.node.id);
                                                         return (
                                                             <li key={product.node.id} className="flex py-6">
                                                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
