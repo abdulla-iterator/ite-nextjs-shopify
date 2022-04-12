@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { storeApi } from '../utils/storeApi';
 import { useCart } from '../lib/cartState';
 import { Customer } from '../src/query';
+import Link from 'next/link';
 
 
 
@@ -53,9 +54,11 @@ const Account = () => {
                 </div>
                 <div className='py-5 mx-5'>
                     <h2 className='text-xl mb-3'>Account details</h2>
-                    <a href="/account/addresses" className='underline  hover:underline-offset-2 text-gray-500'>
-                        View addresses (0)
-                    </a>
+                    <Link href={"/account"}>
+                        <a className='underline  hover:underline-offset-2 text-gray-500'>
+                            View addresses (0)
+                        </a>
+                    </Link>
                 </div>
             </div>
 
