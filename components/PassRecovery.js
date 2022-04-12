@@ -4,29 +4,25 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { customerRecovery } from '../src/mutation';
 import { useRouter } from 'next/router'
-import { useCart } from '../lib/cartState';
 
 
 
 
 const PassRecovery = () => {
     const router = useRouter()
-    const { setSuccess } = useCart()
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState('');
+    const [success, setSuccess] = useState('');
+
 
     const handlePassRecovery = async (e) => {
         e.preventDefault();
 
         const { data, errors } = await storeApi(customerRecovery, { email });
-        console.log(data);
-        console.log(errors);
 
-        console.log(data?.customerRecover?.customerUserErrors.length);
         if (errors == undefined) {
             setSuccess("We've sent you an email with a link to update your password.")
-            router.push('/account/login')
-
+            setEmail('')
         }
 
         if (data?.customerRecover?.customerUserErrors) {
@@ -50,7 +46,7 @@ const PassRecovery = () => {
                     />
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Reset your password</h2>
                     <p className="mt-3 text-center text-sm text-gray-600">
-                        We will send you an email to reset your password
+                        {success}
                     </p>
                     <p className="mt-2 text-center text-sm text-red-600">{errors}</p>
 
