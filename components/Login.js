@@ -4,12 +4,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { CustomerLogin } from '../src/mutation';
+import { useCart } from '../lib/cartState';
 
 
 
 
 const Login = () => {
     const router = useRouter();
+    const { success } = useCart()
     const [inputs, setInputs] = useState({
         email: '',
         password: '',
@@ -46,6 +48,7 @@ const Login = () => {
                             layout='responsive' width={100} height={12}
                         />
                         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+                        <p className="mt-2 text-center text-sm text-green-800">{success}</p>
                         <p className="mt-2 text-center text-sm text-red-900">{errors}</p>
 
                     </div>
@@ -90,7 +93,7 @@ const Login = () => {
 
                             <div className="text-sm">
                                 <Link href={`/account/pass-recovery`}>
-                                    <a className="font-medium text-indigo-600 hover:text-indigo-500">
+                                    <a className="font-medium text-indigo-600 text-decoration: underline hover:text-indigo-500">
                                         Forgot your password?
                                     </a>
                                 </Link>

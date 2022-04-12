@@ -3,21 +3,38 @@ import { storeApi } from '../utils/storeApi';
 import Link from 'next/link';
 import Image from 'next/image';
 import { customerRecovery } from '../src/mutation';
+import { useRouter } from 'next/router'
+import { useCart } from '../lib/cartState';
 
 
 
 
 const PassRecovery = () => {
+    const router = useRouter()
+    const { setSuccess } = useCart()
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState('');
 
     const handlePassRecovery = async (e) => {
         e.preventDefault();
 
-        const { data } = await storeApi(customerRecovery, { email });
+        const { data, errors } = await storeApi(customerRecovery, { email });
+        console.log(data);
+        console.log(errors);
 
-        if (data.customerRecover.customerUserErrors[0] !== null) {
+        console.log(data?.customerRecover?.customerUserErrors.length);
+        if (errors == undefined) {
+            setSuccess("We've sent you an email with a link to update your password.")
+            router.push('/account/login')
+
+        }
+
+        if (data?.customerRecover?.customerUserErrors) {
             setErrors(data.customerRecover?.customerUserErrors[0]?.message);
+        }
+
+        if (errors) {
+            setErrors(errors[0]?.message)
         }
     }
 

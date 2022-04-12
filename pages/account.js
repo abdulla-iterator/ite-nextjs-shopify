@@ -27,7 +27,7 @@ const Account = () => {
         }
         getCustomerDetails();
     }, [])
-    console.log(customerDetails);
+
     const handleLogout = async () => {
         localStorage.removeItem('token');
         router.push('/account/login');
