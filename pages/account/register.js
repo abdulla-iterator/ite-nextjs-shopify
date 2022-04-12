@@ -1,10 +1,10 @@
 import React from 'react'
 import Register from '../../components/Register'
 
-const register = () => {
+const SignUp = () => {
     return (
         <div><Register /></div>
     )
 }
 
-export default register
+export default SignUp

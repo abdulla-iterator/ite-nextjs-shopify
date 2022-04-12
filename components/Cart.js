@@ -6,103 +6,13 @@ import { XIcon } from '@heroicons/react/outline'
 import { useCart } from '../lib/cartState'
 import { storeApi } from '../utils/storeApi';
 import { useEffect, useState } from 'react';
+import { removeItemMutation, increaseQuantityMutation } from '../src/mutation';
+import { getCartQuery } from '../src/query';
 
-
-
-const gql = String.raw
-
-export const getCartQuery = gql`
-query getCart($Id: ID!){
-  cart(id: $Id){
-    id
-    lines(first:10){
-      edges{
-        node{
-          id
-          quantity
-          merchandise{
-            ... on ProductVariant{
-              id
-              image{
-                url
-              }
-              priceV2{
-                amount
-              }
-              product{
-                id
-                title
-                handle
-                variants(first:10){
-                  edges{
-                    node{
-                      id
-                    }
-                  }
-                }
-              }
-            }
-          }
-
-        }
-      }
-    }
-    checkoutUrl
-    estimatedCost{
-      subtotalAmount{
-        amount
-      }
-    }
-  }
-}
-
-`
-
-export const removeItemMutation = gql`
-  mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
-    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
-      cart {
-        id
-      }
-    }
-  }
-`
-export const updateCartMutation = gql`
-    mutation cartLinesAdd($cartId: ID!, $lineIds: [ID!]!) {
-      cartLinesAdd(cartId: $cartId, lineIds: $lineIds) {
-        cart {
-          id
-        }
-      }
-    }
-  `
-
-export const increaseQuantityMutation = gql`
-    mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
-        cartLinesUpdate(cartId: $cartId, lines: $lines) {
-            cart{
-                id
-                estimatedCost{
-                    subtotalAmount{
-                        amount
-                    }
-                }
-                lines(first:10){
-                    edges{
-                        node{
-                            id
-                            quantity
-                        }
-                    }
-                }
-            }
-    }
-}
-`
 
 
 const Cart = () => {
-    const { open, openCart, closeCart, cartData, setCartData, customerDetails } = useCart()
+    const { open, openCart, closeCart, cartData, setCartData, customerDetails, capitalize } = useCart()
     const [loading, setLoading] = useState(false);
 
 
@@ -167,7 +77,6 @@ const Cart = () => {
         await storeApi(increaseQuantityMutation, variables)
         const { data } = await storeApi(getCartQuery, { Id: cartData?.cart?.id })
         setCartData(data)
-        console.log('increased cart', data);
         setLoading(false)
     }
 
@@ -203,7 +112,7 @@ const Cart = () => {
                                 <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                                     <div className="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
                                         <div className="flex items-start justify-between">
-                                            <Dialog.Title className="text-lg font-medium text-gray-900">{customerDetails?.customer?.displayName} Shopping cart {cartData?.cart?.lines.edges.length === 0 && 'is Empty'}</Dialog.Title>
+                                            <Dialog.Title className="text-lg font-medium text-gray-900">{capitalize(customerDetails?.customer?.displayName)} Shopping cart {cartData?.cart?.lines.edges.length === 0 && 'is Empty'}</Dialog.Title>
                                             <div className="ml-3 flex h-7 items-center">
                                                 <button
                                                     type="button"
@@ -247,7 +156,7 @@ const Cart = () => {
 
                                                                         <div className="flex">
                                                                             <button type="button" onClick={() => handleRemoveItem(cartData?.cart?.id, product?.node?.id)} className="font-medium text-indigo-600 hover:text-indigo-500">
-                                                                                {loading ? 'Removing' : 'Remove'}
+                                                                                Remove
                                                                             </button>
                                                                         </div>
                                                                     </div>

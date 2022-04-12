@@ -3,27 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link';
 import { useCart } from '../lib/cartState';
 import { storeApi } from '../utils/storeApi';
+import { updateCartMutation, createCartMutation } from '../src/mutation';
 
-const gql = String.raw
-const createCartMutation = gql`
- mutation createCart($input: CartInput){
-  cartCreate(input: $input) {
-      cart {
-        id
-      }
-    }
-  }
-`
-
-const updateCartMutation = gql`
-    mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
-      cartLinesAdd(cartId: $cartId, lines: $lines) {
-        cart {
-          id
-        }
-      }
-    }
-  `
 
 const Products = ({ products }) => {
     const ProductApi = products?.edges
@@ -33,10 +14,8 @@ const Products = ({ products }) => {
 
 
     const AddToCart = async (id) => {
-        console.log('adddddddddddddd');
         setLoading(true);
         let cartId = localStorage.getItem('cartId')
-        console.log(cartId)
 
         if (cartId) {
             const variables = {
@@ -48,7 +27,6 @@ const Products = ({ products }) => {
             }
 
             const data = await storeApi(updateCartMutation, variables)
-            console.log('updating cart', data);
         } else {
             const variables = {
                 input: {
@@ -60,9 +38,7 @@ const Products = ({ products }) => {
             }
 
             const { data } = await storeApi(createCartMutation, variables)
-            // console.log(data.cartCreate.cart.id);
             let cartId = data.cartCreate.cart.id
-            console.log(cartId);
             localStorage.setItem('cartId', cartId)
         }
         setLoading(false);
@@ -76,7 +52,6 @@ const Products = ({ products }) => {
 
                 <div className="grid z-0 grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                     {ProductApi.map((item) => {
-                        console.log("cart id adfsfsfsadfa", item);
                         const product = item.node
                         const image = product.images.edges[0].node
                         return (
@@ -98,7 +73,7 @@ const Products = ({ products }) => {
                                     <p className="mt-1 text-lg font-medium text-gray-900">₹ {product.priceRange.minVariantPrice.amount}</p>
                                 </a>
                                 <button onClick={() => AddToCart(item.node.variants.edges[0].node.id)} className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
-                                    {loading ? 'Adding to Cart' : 'Add to Cart'}
+                                    Add to Cart
                                 </button>
                             </div>
                         )

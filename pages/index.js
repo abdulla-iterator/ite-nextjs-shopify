@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Products from '../components/Products'
 import { storeApi } from '../utils/storeApi'
+import { productsQuery } from '../src/query'
 
 export default function Home({ products }) {
   return (
@@ -24,41 +25,3 @@ export async function getStaticProps() {
     }
   }
 }
-
-// query for the first 8 products in home page
-const gql = String.raw
-const productsQuery = gql`
-query products{
-products(first: 8) {
-  edges {
-    node {
-      title
-      handle
-      variants(first:10){
-          edges{
-            node{
-              id
-            }
-          }
-        }
-      priceRange{
-        minVariantPrice{
-          amount
-        }
-      }
-      images(first:1){
-        edges{
-          node{
-            url
-            altText
-            
-          }
-        }
-      }
-    }
-  }
-}
-}
-
-  
-  `

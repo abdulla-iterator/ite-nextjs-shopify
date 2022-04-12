@@ -2,23 +2,11 @@ import { useState } from 'react';
 import { storeApi } from '../utils/storeApi';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { CustomerLogin } from '../src/mutation';
 
 
-const gql = String.raw
-const CustomerLogin = gql`
-mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
-  customerAccessTokenCreate(input: $input) {
-    customerAccessToken {
-      accessToken
-      expiresAt
-    }
-    customerUserErrors {
-      # CustomerUserError fields
-      message
-    }
-  }
-}
-`
+
 
 const Login = () => {
     const router = useRouter();
@@ -31,16 +19,16 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         const { data } = await storeApi(CustomerLogin, { input: inputs });
-        console.log(data);
+
         const token = data?.customerAccessTokenCreate?.customerAccessToken?.accessToken;
-        console.log(token);
+
         localStorage.setItem('token', token);
+
         if (data?.customerAccessTokenCreate?.customerAccessToken?.accessToken) {
             router.push('/account');
         }
         if (data?.customerAccessTokenCreate?.customerUserErrors[0]?.message) {
             setErrors(data?.customerAccessTokenCreate?.customerUserErrors[0]?.message);
-            console.log('erro');
             setInputs({ inputs: { email: '', password: '' } });
         }
 
@@ -51,10 +39,11 @@ const Login = () => {
             <div className="min-h-full flex items-center justify-center mt-20 py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full  space-y-8">
                     <div>
-                        <img
+                        <Image
                             className="mx-auto h-12 w-auto"
                             src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
                             alt="Workflow"
+                            layout='responsive' width={100} height={12}
                         />
                         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
                         <p className="mt-2 text-center text-sm text-red-900">{errors}</p>
@@ -98,18 +87,6 @@ const Login = () => {
                         </div>
 
                         <div className="flex items-center justify-between">
-                            {/* <div className="flex items-center"> */}
-                            {/* <input
-                                    id="remember-me"
-                                    name="remember-me"
-                                    type="checkbox"
-                                    
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                                />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                                    Remember me
-                                </label>
-                            </div> */}
 
                             <div className="text-sm">
                                 <Link href={`/account/pass-recovery`}>

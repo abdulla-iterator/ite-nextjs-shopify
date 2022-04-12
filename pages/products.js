@@ -2,9 +2,10 @@ import React from 'react'
 import Head from 'next/head'
 import Products from '../components/Products'
 import { storeApi } from '../utils/storeApi';
+import { productsQuery } from '../src/query';
 
 
-const productsList = ({ products }) => {
+const ProductsList = ({ products }) => {
 
   return (
     <>
@@ -17,7 +18,7 @@ const productsList = ({ products }) => {
   )
 }
 
-export default productsList
+export default ProductsList
 
 export async function getStaticProps() {
   const { data } = await storeApi(productsQuery)
@@ -28,42 +29,3 @@ export async function getStaticProps() {
     }
   }
 }
-
-// query for the all the products which is in this case 20
-const gql = String.raw
-
-const productsQuery = gql`
-  query products{
-  products(first: 20) {
-    edges {
-      node {
-        title
-        handle
-        variants(first:1){
-          edges{
-            node{
-              id
-            }
-          }
-        }
-        priceRange{
-          minVariantPrice{
-            amount
-          }
-        }
-        images(first:1){
-          edges{
-            node{
-              url
-              altText
-              
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-    
-    `

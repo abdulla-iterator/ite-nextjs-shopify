@@ -1,13 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-// import collections from '../pages/collections'
-// import CollectionsApi from '../utils/CollectionsApi'
 
 const Collections = ({ collections }) => {
-    console.log(collections);
     const CollectionsApi = collections.edges
-    console.log(CollectionsApi);
 
     return (
         <div className="bg-gray-100">

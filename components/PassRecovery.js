@@ -1,18 +1,11 @@
 import { useState } from 'react';
 import { storeApi } from '../utils/storeApi';
 import Link from 'next/link';
+import Image from 'next/image';
+import { customerRecovery } from '../src/mutation';
 
 
-const gql = String.raw
-const customerRecovery = gql`
-mutation customerRecover($email: String!){
-  customerRecover(email: $email){
-    customerUserErrors{
-      message
-    }
-  }
-}
-`
+
 
 const PassRecovery = () => {
     const [email, setEmail] = useState('');
@@ -26,17 +19,17 @@ const PassRecovery = () => {
         if (data.customerRecover.customerUserErrors[0] !== null) {
             setErrors(data.customerRecover?.customerUserErrors[0]?.message);
         }
-        setEmail('')
     }
 
     return (
         <div className="min-h-full flex items-center justify-center mt-20 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full  space-y-8">
                 <div>
-                    <img
+                    <Image
                         className="mx-auto h-12 w-auto"
                         src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
                         alt="Workflow"
+                        layout='responsive' width={100} height={12}
                     />
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Reset your password</h2>
                     <p className="mt-3 text-center text-sm text-gray-600">

@@ -4,27 +4,10 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { storeApi } from '../../utils/storeApi';
 import { useCart } from '../../lib/cartState';
+import { singleCollectionQuery } from '../../src/query';
+import { createCartMutation, updateCartMutation } from '../../src/mutation';
 
-const gql = String.raw
-const createCartMutation = gql`
- mutation createCart($input: CartInput){
-  cartCreate(input: $input) {
-      cart {
-        id
-      }
-    }
-  }
-`
 
-const updateCartMutation = gql`
-    mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
-      cartLinesAdd(cartId: $cartId, lines: $lines) {
-        cart {
-          id
-        }
-      }
-    }
-  `
 
 const SingleCollection = ({ Collection }) => {
 
@@ -106,7 +89,7 @@ const SingleCollection = ({ Collection }) => {
                     <p className="mt-1 text-lg font-medium text-gray-900">₹ {product.priceRange.minVariantPrice.amount}</p>
                   </a>
                   <button onClick={() => AddToCart(item.node.variants.edges[0].node.id)} className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
-                    {loading ? 'Adding to Cart' : 'Add to Cart'}
+                    Add to Cart
                   </button>
                 </div>
               )
@@ -131,41 +114,3 @@ export async function getServerSideProps({ params: { handle } }) {
     }
   }
 }
-
-
-
-// query for single collection products 
-const singleCollectionQuery = gql`
-query singleCollection($handle: String!){
-  collection(handle: $handle){
-    title
-    products(first:10){
-      edges{
-        node{
-          title
-          handle
-          variants(first:1){
-          edges{
-            node{
-              id
-            }
-          }
-        }
-          priceRange{
-            minVariantPrice{
-              amount
-            }
-          }
-          images(first:1){
-            edges{
-              node{
-                url
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-`

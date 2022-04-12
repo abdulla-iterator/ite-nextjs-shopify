@@ -5,27 +5,9 @@ import React from 'react'
 import { storeApi } from '../utils/storeApi'
 import { useCart } from '../lib/cartState';
 import { increaseQuantityMutation } from './Cart';
+import { createCartMutation, updateCartMutation } from '../src/mutation';
 
-const gql = String.raw
-const createCartMutation = gql`
- mutation createCart($input: CartInput){
-  cartCreate(input: $input) {
-      cart {
-        id
-      }
-    }
-  }
-`
 
-const updateCartMutation = gql`
-    mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
-      cartLinesAdd(cartId: $cartId, lines: $lines) {
-        cart {
-          id
-        }
-      }
-    }
-  `
 
 const SingleProduct = ({ product }) => {
   const { openCart, setCartData, cartData, quantity, setQuantity } = useCart()

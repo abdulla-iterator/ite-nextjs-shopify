@@ -4,7 +4,7 @@ import { useCart } from '../lib/cartState'
 import Cart from './Cart'
 import Link from 'next/link'
 
-const Navb = () => {
+const Navbar = () => {
     const { openCart } = useCart()
 
     const [toggle, setToggle] = useState(false)
@@ -82,7 +82,7 @@ const Navb = () => {
     )
 }
 
-export default Navb
+export default Navbar
 
 
 
