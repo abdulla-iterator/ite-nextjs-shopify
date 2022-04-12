@@ -19,18 +19,21 @@ const PassRecovery = () => {
         e.preventDefault();
 
         const { data, errors } = await storeApi(customerRecovery, { email });
+        console.log(data);
 
-        if (errors == undefined) {
+        if (errors == undefined && data?.customerRecover?.customerUserErrors?.length === 0) {
             setSuccess("We've sent you an email with a link to update your password.")
             setEmail('')
         }
 
         if (data?.customerRecover?.customerUserErrors) {
             setErrors(data.customerRecover?.customerUserErrors[0]?.message);
+            setSuccess('')
         }
 
         if (errors) {
             setErrors(errors[0]?.message)
+            setSuccess('')
         }
     }
 
